@@ -722,7 +722,7 @@ public class WechatApi {
         String url = conf.get("API_webwxsendmsg") + "?pass_ticket=%s";
         url = String.format(url, session.getPassTicket());
 
-        String              clientMsgId = System.currentTimeMillis() + Utils.getRandomNumber(5);
+        String clientMsgId = System.currentTimeMillis() + Utils.getRandomNumber(5);
         Map<String, Object> params      = new HashMap<String, Object>();
         params.put("BaseRequest", this.baseRequest);
         Map<String, Object> Msg = new HashMap<String, Object>();

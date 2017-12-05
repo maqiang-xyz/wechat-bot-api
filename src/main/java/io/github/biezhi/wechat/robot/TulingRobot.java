@@ -50,8 +50,8 @@ public class TulingRobot extends AbstractMessageHandler {
     public void groupMessage(GroupMessage groupMessage) {
         System.out.println(groupMessage);
         String text = groupMessage.getText();
-        if (Utils.isNotBlank(text)) {
-            String result = getResult(groupMessage.getText());
+        if (Utils.isNotBlank(text) && text.startsWith("@好吃的大叔")) {
+            String result = getResult(text.replace("@好吃的大叔", ""));
             groupMessage.sendText(result, groupMessage.getGroupId());
         }
     }
@@ -82,6 +82,7 @@ public class TulingRobot extends AbstractMessageHandler {
         json.put("key", apiKey);
         json.put("timestamp", timestamp);
         json.put("data", dataStr);
+        json.put("info", question);
 
         RequestBody requestBody = RequestBody.create(JSON, Utils.toJson(json));
         Request request = new Request.Builder()
