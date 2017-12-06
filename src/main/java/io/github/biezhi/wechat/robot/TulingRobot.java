@@ -21,7 +21,7 @@ import static io.github.biezhi.wechat.api.WechatApi.JSON;
  * 图灵机器人实现
  *
  * @author biezhi
- *         17/06/2017
+ * 17/06/2017
  */
 public class TulingRobot extends AbstractMessageHandler {
 
@@ -36,14 +36,14 @@ public class TulingRobot extends AbstractMessageHandler {
 
     @Override
     public void userMessage(UserMessage userMessage) {
-        if (null == userMessage) {
-            return;
-        }
-        String text = userMessage.getText();
-        JsonObject raw_msg = userMessage.getRawMsg();
-        String toUid = raw_msg.get("FromUserName").getAsString();
-        String result = getResult(text);
-        userMessage.sendText(result, toUid);
+//        if (null == userMessage) {
+//            return;
+//        }
+//        String text = userMessage.getText();
+//        JsonObject raw_msg = userMessage.getRawMsg();
+//        String toUid = raw_msg.get("FromUserName").getAsString();
+//        String result = getResult(text);
+//        userMessage.sendText(result, toUid);
     }
 
     @Override
@@ -52,6 +52,10 @@ public class TulingRobot extends AbstractMessageHandler {
         String text = groupMessage.getText();
         if (Utils.isNotBlank(text) && text.startsWith("@好吃的大叔")) {
             String result = getResult(text.replace("@好吃的大叔", ""));
+            groupMessage.sendText(result, groupMessage.getGroupId());
+        }
+        if (Utils.isNotBlank(text) && text.startsWith("@久仰")) {
+            String result = getResult(text.replace("@久仰", ""));
             groupMessage.sendText(result, groupMessage.getGroupId());
         }
     }
@@ -93,13 +97,10 @@ public class TulingRobot extends AbstractMessageHandler {
         try {
             Response response = okHttpClient.newCall(request).execute();
             TulingRet tulingRet = Utils.fromJson(response.body().string(), TulingRet.class);
-            if (tulingRet.code == 100000) {
-                return tulingRet.text;
-            }
+            return tulingRet.text;
         } catch (Exception e) {
             return null;
         }
-        return null;
     }
 
     class TulingRet {

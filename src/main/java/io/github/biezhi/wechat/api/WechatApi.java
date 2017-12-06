@@ -43,7 +43,7 @@ public class WechatApi {
     protected Map<String, Object> baseRequest;
 
     protected JsonObject synckeyDic;
-    protected String     synckey;
+    protected String synckey;
 
     // device_id: 登录手机设备
     // web wechat 的格式为: e123456789012345 (e+15位随机数)
@@ -214,7 +214,7 @@ public class WechatApi {
      * @return
      */
     public boolean getUUID() {
-        String              url    = conf.get("API_jsLogin");
+        String url = conf.get("API_jsLogin");
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("appid", appid);
         params.put("fun", "new");
@@ -248,7 +248,7 @@ public class WechatApi {
      * @return 返回二维码的图片路径
      */
     public String genqrcode() {
-        String     url    = conf.get("API_qrcode_img") + session.getUuid();
+        String url = conf.get("API_qrcode_img") + session.getUuid();
         final File output = new File("qrcode.jpg");
 
         RequestBody body = new FormBody.Builder()
@@ -263,9 +263,9 @@ public class WechatApi {
                 .build();
 
         try {
-            Response         response = client.newCall(request).execute();
-            byte[]           bytes    = response.body().bytes();
-            FileOutputStream fos      = new FileOutputStream(output);
+            Response response = client.newCall(request).execute();
+            byte[] bytes = response.body().bytes();
+            FileOutputStream fos = new FileOutputStream(output);
             fos.write(bytes);
             fos.close();
         } catch (Exception e) {
@@ -302,7 +302,7 @@ public class WechatApi {
             return true;
         }
         if (code.equals("200")) {
-            String pm    = Utils.match("window.redirect_uri=\"(\\S+?)\";", response);
+            String pm = Utils.match("window.redirect_uri=\"(\\S+?)\";", response);
             String r_uri = pm + "&fun=new";
             this.redirectUri = r_uri;
             this.wxHost = r_uri.split("://")[1].split("/")[0];
@@ -325,13 +325,13 @@ public class WechatApi {
     public boolean login() {
 
         Request.Builder requestBuilder = new Request.Builder().url(this.redirectUri);
-        Request         request        = requestBuilder.build();
+        Request request = requestBuilder.build();
 
         log.debug("[*] 请求 => {}\n", request);
         try {
-            Response     response = client.newCall(request).execute();
-            Headers      headers  = response.headers();
-            List<String> cookies  = headers.values("Set-Cookie");
+            Response response = client.newCall(request).execute();
+            Headers headers = response.headers();
+            List<String> cookies = headers.values("Set-Cookie");
             this.cookie = Utils.getCookie(cookies);
             log.info("[*] 设置cookie [{}]", this.cookie);
             String body = response.body().string();
@@ -389,7 +389,7 @@ public class WechatApi {
     private void makeSynckey(JsonObject dic) {
         this.synckeyDic = dic.getAsJsonObject("SyncKey");
         StringBuffer synckey = new StringBuffer();
-        JsonArray    list    = this.synckeyDic.getAsJsonArray("List");
+        JsonArray list = this.synckeyDic.getAsJsonArray("List");
         for (JsonElement element : list) {
             JsonObject item = element.getAsJsonObject();
             synckey.append("|" + item.get("Key").getAsInt() + "_" + item.get("Val").getAsInt());
@@ -546,8 +546,8 @@ public class WechatApi {
         JsonArray groupMembers = batchGetContact(groupIds);
         for (JsonElement element : groupMembers) {
             JsonObject member_list = element.getAsJsonObject();
-            String     g_id        = member_list.get("UserName").getAsString();
-            JsonObject group       = g_dict.get(g_id);
+            String g_id = member_list.get("UserName").getAsString();
+            JsonObject group = g_dict.get(g_id);
             group.addProperty("MemberCount", member_list.get("MemberCount").getAsInt());
             group.addProperty("OwnerUin", member_list.get("OwnerUin").getAsInt());
             this.groupMemeberList.put(g_id, member_list.get("MemberList").getAsJsonArray());
@@ -565,7 +565,7 @@ public class WechatApi {
      * @return
      */
     public int[] synccheck() {
-        String              url    = conf.get("API_synccheck");
+        String url = conf.get("API_synccheck");
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("r", System.currentTimeMillis() + Utils.getRandomNumber(5));
         params.put("sid", session.getSid());
@@ -581,7 +581,7 @@ public class WechatApi {
         if (Utils.isBlank(response)) {
             return arr;
         }
-        String retcode  = Utils.match("retcode:\"(\\d+)\",", response);
+        String retcode = Utils.match("retcode:\"(\\d+)\",", response);
         String selector = Utils.match("selector:\"(\\d+)\"}", response);
         if (null != retcode && null != selector) {
             arr[0] = Integer.parseInt(retcode);
@@ -598,8 +598,8 @@ public class WechatApi {
      * @return
      */
     public Map<String, String> getGroupUserById(String userId, String groupId) {
-        String              unknownPeople = Const.LOG_MSG_UNKNOWN_NAME + userId;
-        Map<String, String> user          = new HashMap<String, String>();
+        String unknownPeople = Const.LOG_MSG_UNKNOWN_NAME + userId;
+        Map<String, String> user = new HashMap<String, String>();
         // 微信动态ID
         user.put("UserName", userId);
         // 微信昵称
@@ -639,8 +639,8 @@ public class WechatApi {
      * @return
      */
     public Map<String, String> getGroupById(String groupId) {
-        String              unknownGroup = Const.LOG_MSG_UNKNOWN_GROUP_NAME + groupId;
-        Map<String, String> group        = new HashMap<String, String>();
+        String unknownGroup = Const.LOG_MSG_UNKNOWN_GROUP_NAME + groupId;
+        Map<String, String> group = new HashMap<String, String>();
         group.put("UserName", groupId);
         group.put("NickName", "");
         group.put("DisplayName", "");
@@ -670,8 +670,8 @@ public class WechatApi {
      * @return
      */
     public Map<String, String> getUserById(String userId) {
-        String              unknownPeople = Const.LOG_MSG_UNKNOWN_NAME + userId;
-        Map<String, String> user          = new HashMap<String, String>();
+        String unknownPeople = Const.LOG_MSG_UNKNOWN_NAME + userId;
+        Map<String, String> user = new HashMap<String, String>();
         user.put("UserName", userId);
         user.put("RemarkName", "");
         user.put("NickName", "");
@@ -723,7 +723,7 @@ public class WechatApi {
         url = String.format(url, session.getPassTicket());
 
         String clientMsgId = System.currentTimeMillis() + Utils.getRandomNumber(5);
-        Map<String, Object> params      = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("BaseRequest", this.baseRequest);
         Map<String, Object> Msg = new HashMap<String, Object>();
         Msg.put("Type", 1);
@@ -766,8 +766,8 @@ public class WechatApi {
     private String doGet(String url, String cookie, Map<String, Object>... params) {
         if (null != params && params.length > 0) {
             Map<String, Object> param = params[0];
-            Set<String>         keys  = param.keySet();
-            StringBuilder       sbuf  = new StringBuilder(url);
+            Set<String> keys = param.keySet();
+            StringBuilder sbuf = new StringBuilder(url);
             if (url.contains("=")) {
                 sbuf.append("&");
             } else {
@@ -790,7 +790,7 @@ public class WechatApi {
             log.debug("[*] 请求 => {}\n", request);
 
             Response response = client.newCall(request).execute();
-            String   body     = response.body().string();
+            String body = response.body().string();
 
             log.debug("[*] 响应 => {}", body);
             return body;
@@ -801,7 +801,7 @@ public class WechatApi {
     }
 
     private JsonElement doPost(String url, Object object) {
-        String      bodyJson    = null;
+        String bodyJson = null;
         RequestBody requestBody = RequestBody.create(JSON, "");
         if (null != object) {
             bodyJson = Utils.toJson(object);
@@ -818,7 +818,7 @@ public class WechatApi {
         log.debug("[*] 请求 => {}\n", request);
         try {
             Response response = client.newCall(request).execute();
-            String   body     = response.body().string();
+            String body = response.body().string();
             if (null != body && body.length() <= 300) {
                 log.debug("[*] 响应 => {}", body);
             }
